@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: com.softwarehut.edu
+---
+testFramework: junit
+sourceLanguage: java
