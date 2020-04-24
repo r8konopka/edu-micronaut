@@ -1,10 +1,13 @@
 plugins {
     id "net.ltgt.apt-eclipse" version "0.21"
     id "com.github.johnrengelman.shadow" version "5.2.0"
-    id "io.freefair.lombok" version "5.0.0"
+    id "io.freefair.lombok" version "5.0.0" //lombok annotation processing
     id "war"
     id "application"
 }
+
+//Retaining Parameter Names in Controller's methods
+//compileJava.options.compilerArgs += '-parameters'
 
 version "0.1"
 group "com.softwarehut.edu"
@@ -20,10 +23,13 @@ configurations {
 }
 
 dependencies {
+    annotationProcessor platform("org.projectlombok:lombok:$lombokVersion")
     annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     annotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut:micronaut-validation"
     annotationProcessor "io.micronaut:micronaut-security"
+    annotationProcessor "io.micronaut:micronaut-graal"
+    annotationProcessor "io.micronaut.data:micronaut-data-processor:1.0.2"
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "io.micronaut:micronaut-inject"
     implementation "io.micronaut:micronaut-validation"
@@ -31,16 +37,35 @@ dependencies {
     implementation "javax.annotation:javax.annotation-api"
     implementation("io.micronaut.servlet:micronaut-servlet-engine:1.0.0.M3")
     implementation "io.micronaut:micronaut-http-server-netty"
-    // Tomcat
-//    developmentOnly("io.micronaut.servlet:micronaut-http-server-tomcat:1.0.0.M3")
+
+    implementation("io.micronaut.data:micronaut-data-hibernate-jpa:1.0.2")
+    implementation("io.micronaut.data:micronaut-data-jdbc")
+
+    //Argon2
+    compile 'de.mkammerer:argon2-jvm:2.7'
+    compile ("org.springframework.security:spring-security-crypto:5.3.1.RELEASE")
+    compile ("org.bouncycastle:bcpkix-jdk15on:1.65")
+
+    //GraalVM
+    compileOnly "org.graalvm.nativeimage:svm"
+
     implementation "io.micronaut:micronaut-security" //Basic Auth
     implementation "io.micronaut:micronaut-http-client"
-    compileOnly "org.projectlombok:lombok:1.18.12"
+    compileOnly platform("org.projectlombok:lombok:$lombokVersion")
+    runtime 'org.postgresql:postgresql:42.2.4'
+    runtime("io.micronaut.configuration:micronaut-jdbc-tomcat")
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
+    compile group: 'ch.qos.logback', name: 'logback-core', version: '0.9.19'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.2'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.2'
+
+
+
+
     testAnnotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
     testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
-    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine"
     testImplementation "io.micronaut.test:micronaut-test-junit5"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
 }
